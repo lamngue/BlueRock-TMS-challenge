@@ -4,7 +4,7 @@ public class Solve {
     private final int depth;
     private final char[][] grid;
 
-    // Method to prioritize pieces based on their shape
+    // Method to prioritize pieces based on their shape area
     private Piece[] prioritizePiecesByShape(Piece[] pieces) {
         Arrays.sort(pieces, Comparator.comparingInt(this::calculateCoverageArea).reversed());
         return pieces;
@@ -21,23 +21,6 @@ public class Solve {
             }
         }
         return area;
-    }
-
-    // Inner class to store piece and its coverage area
-    private class PieceCoverage implements Comparable<PieceCoverage> {
-        Piece piece;
-        int coverageArea;
-
-        PieceCoverage(Piece piece, int coverageArea) {
-            this.piece = piece;
-            this.coverageArea = coverageArea;
-        }
-
-        @Override
-        public int compareTo(PieceCoverage other) {
-            // Compare based on coverage area
-            return Integer.compare(this.coverageArea, other.coverageArea);
-        }
     }
 
     public Solve(Board board) {
@@ -81,17 +64,4 @@ public class Solve {
 
         return false;
     }
-//    public boolean isValidPartialSolution(Board board) {
-//        char[][] grid = board.getGrid();
-//        int depth = board.getDepth();
-//
-//        for (int[] coords : board.getPlacedCoordinates()) {
-//            int row = coords[0];
-//            int col = coords[1];
-//            if (Character.getNumericValue(grid[row][col]) > depth - 1) {
-//                return false;
-//            }
-//        }
-//        return true;
-//    }
 }
