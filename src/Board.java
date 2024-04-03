@@ -88,6 +88,6 @@ public class Board {
                 }
             }
         }
-        placed.removeLast();
+        placed.remove(placed.size() -  1);
     }
 }
