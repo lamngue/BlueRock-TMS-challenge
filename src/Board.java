@@ -5,7 +5,7 @@ public class Board {
     private final int depth;
     private final char[][] grid;
     private final List<int[]> placed;
-
+    private final List<Piece> placedPieces;
     public int getDepth() {
         return depth;
     }
@@ -14,6 +14,7 @@ public class Board {
         this.depth = depth;
         this.grid = new char[m][n];
         this.placed = new ArrayList<>(); // coordinates for the pieces
+        this.placedPieces = new ArrayList<>();
     }
 
 
@@ -57,6 +58,8 @@ public class Board {
     public void placePiece(Piece piece, int row, int col, int depth) {
         int m = piece.shape.length;
         int n = piece.shape[0].length;
+        piece.setRowPlacement(row);
+        piece.setColPlacement(col);
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
                 if (piece.shape[i][j] == 'X') {
@@ -71,11 +74,18 @@ public class Board {
         }
 
         placed.add(new int[]{row, col});
+        placedPieces.add(piece);
+    }
+
+    public List<Piece> getPlacedPieces() {
+        return placedPieces;
     }
 
     public void removePiece(Piece piece, int row, int col, int depth) {
         int m = piece.shape.length;
         int n = piece.shape[0].length;
+        piece.setRowPlacement(-1);
+        piece.setColPlacement(-1);
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
                 if (piece.shape[i][j] == 'X') {
@@ -89,5 +99,7 @@ public class Board {
             }
         }
         placed.remove(placed.size() -  1);
+        placedPieces.remove(piece);
     }
+
 }

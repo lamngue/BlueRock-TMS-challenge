@@ -3,13 +3,13 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
-
-public class BoardGame {
+import java.util.List;
+public class BoardGame extends JFrame implements ActionListener {
     JButton btn;
     JTextArea textArea;
 
     public BoardGame() {
-       /* this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setTitle("BlueRock TMS challenge");
         this.setLayout(new BorderLayout());
 
@@ -23,38 +23,50 @@ public class BoardGame {
         this.add(scrollPane, BorderLayout.CENTER);
 
         this.pack();
-        this.setVisible(true);*/
+        this.setVisible(true);
     }
 
-//    @Override
-//    public void actionPerformed(ActionEvent e) {
-//        if (e.getSource() == btn) {
-//            JFileChooser file_upload = new JFileChooser();
-//            file_upload.setCurrentDirectory(new File("./src/test_cases"));
-//            int res = file_upload.showOpenDialog(null);
-//            if (res == JFileChooser.APPROVE_OPTION) {
-//
-//            }
-//        }
-//    }
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == btn) {
+            JFileChooser file_upload = new JFileChooser();
+            file_upload.setCurrentDirectory(new File("./src/test_cases"));
+            int res = file_upload.showOpenDialog(null);
+            if (res == JFileChooser.APPROVE_OPTION) {
+                File file_path = new File(file_upload.getSelectedFile().getAbsolutePath());
+                try {
+                    FileReader fileReader = new FileReader(file_path);
+                    BufferedReader bufferedReader = new BufferedReader(fileReader);
 
-//    public char[][] displayBoardAfterPuttingPiece(char[][] board, Piece piece, int row, int col, int depth) {
-//        int m = piece.shape.length;
-//        int n = piece.shape[0].length;
-//        for (int i = 0; i < m; i++) {
-//            for (int j = 0; j < n; j++) {
-//                if (piece.shape[i][j] == 'X') {
-//                    if (Character.getNumericValue(board[row + i][col + j]) == depth - 1) {
-//                        board[row + i][col + j] = '0';
-//                    } else {
-//                        char newVal = String.valueOf(Character.getNumericValue(board[row + i][col + j]) + 1).charAt(0);
-//                        board[row + i][col + j] = newVal;
-//                    }
-//                }
-//            }
-//        }
-//        return board;
-//    }
+                    String line1 = bufferedReader.readLine();
+                    String line2 = bufferedReader.readLine();
+                    String line3 = bufferedReader.readLine();
+                    processFileContent(line1, line2, line3);
+                    bufferedReader.close();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        }
+    }
+
+    public char[][] displayBoardAfterPuttingPiece(char[][] board, Piece piece, int row, int col, int depth) {
+        int m = piece.shape.length;
+        int n = piece.shape[0].length;
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (piece.shape[i][j] == 'X') {
+                    if (Character.getNumericValue(board[row + i][col + j]) == depth - 1) {
+                        board[row + i][col + j] = '0';
+                    } else {
+                        char newVal = String.valueOf(Character.getNumericValue(board[row + i][col + j]) + 1).charAt(0);
+                        board[row + i][col + j] = newVal;
+                    }
+                }
+            }
+        }
+        return board;
+    }
 
     private void appendBoard(StringBuilder builder, char[][] board) {
         for (char[] row : board) {
@@ -89,7 +101,7 @@ public class BoardGame {
                     piece[row][col] = n_rows[row].charAt(col);
                 }
             }
-            pieces[i] = new Piece(piece);
+            pieces[i] = new Piece(piece, i, -1, -1);
         }
 
         int m = board.length;
@@ -102,33 +114,58 @@ public class BoardGame {
         int idx_piece = 0;
         char[][] cur_board = board;
         StringBuilder board_stage = new StringBuilder();
+        board_stage.append("Initial Board").append("\n");
+//        appendBoard(board_stage, board);
 
         if (solver.solve(gameBoard, pieces, 0)) {
-            int pieceIndex = 0;
-            for (int[] coordinates : gameBoard.getPlacedCoordinates()) {
-                System.out.println("Piece " + (pieceIndex + 1) + " placed at: (" + coordinates[0] + ", " + coordinates[1] + ")");
-                pieceIndex++;
+            List<int[]> placedCoordinates = gameBoard.getPlacedCoordinates();
+            for (int i = 0; i < placedCoordinates.size(); i++) {
+                int[] coordinates = placedCoordinates.get(i);
+                System.out.println("Piece " + (pieces[i].getIndex() + 1) + " placed at: (" + coordinates[1] + ", " + coordinates[0] + ")");
             }
         } else {
             System.out.println("No solution found.\n");
         }
         System.out.println("-------------------------------------------------");
-//        textArea.append("-----------------------------------------------------\n");
+        System.out.println("-------------------------------------------------");
     }
     public static void main(String[] args) {
 
-        String file_path = "src/test_cases/06.txt";
-        try {
-            FileReader fileReader = new FileReader(file_path);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
+        String outputFileName = "src/output/execution_times_model1.txt";
 
-            String line1 = bufferedReader.readLine();
-            String line2 = bufferedReader.readLine();
-            String line3 = bufferedReader.readLine();
-            processFileContent(line1, line2, line3);
-            bufferedReader.close();
+        try (PrintWriter writer = new PrintWriter(new FileWriter(outputFileName, true))) {
+            // Process input files from "00.txt" to "09.txt"
+            for (int i = 0; i <= 9; i++) {
+                // Construct file path
+                String fileNumber = String.format("%02d", i);
+                String file_path = "src/test_cases/" + fileNumber + ".txt";
+
+                long startTime = System.currentTimeMillis();
+
+                try {
+                    FileReader fileReader = new FileReader(file_path);
+                    BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+                    String line1 = bufferedReader.readLine();
+                    String line2 = bufferedReader.readLine();
+                    String line3 = bufferedReader.readLine();
+                    processFileContent(line1, line2, line3);
+                    bufferedReader.close();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                long endTime = System.currentTimeMillis();
+
+                long executionTime = endTime - startTime;
+                double executionTimeMinutes = (double) executionTime / 60000;
+
+                // Append execution time to output file
+                writer.println("File: " + fileNumber + ".txt, Execution time: " + executionTimeMinutes + " minutes\n");
+                System.out.println("File: " + fileNumber + ".txt, Execution time: " + executionTimeMinutes + " minutes");
+            }
         } catch (IOException ex) {
-            throw new RuntimeException(ex);
+            ex.printStackTrace();
         }
     }
 }
