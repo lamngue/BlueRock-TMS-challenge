@@ -53,7 +53,6 @@ public class BoardGame {
         }
 
         System.out.println("-------------------------------------------------");
-        System.out.println("-------------------------------------------------");
     }
     public static void main(String[] args) {
 
@@ -61,7 +60,7 @@ public class BoardGame {
 
         try (PrintWriter writer = new PrintWriter(new FileWriter(outputFileName, true))) {
             // Process input files from "00.txt" to "09.txt"
-            for (int i = 0; i <= 9; i++) {
+            for (int i = 6; i <= 9; i++) {
                 // Construct file path
                 String fileNumber = String.format("%02d", i);
                 String file_path = "src/test_cases/" + fileNumber + ".txt";
@@ -89,6 +88,7 @@ public class BoardGame {
                 // Append execution time to output file
                 writer.println("File: " + fileNumber + ".txt, Execution time: " + executionTimeMinutes + " minutes\n");
                 System.out.println("File: " + fileNumber + ".txt, Execution time: " + executionTimeMinutes + " minutes");
+                System.out.println("-------------------------------------------------");
             }
         } catch (IOException ex) {
             ex.printStackTrace();

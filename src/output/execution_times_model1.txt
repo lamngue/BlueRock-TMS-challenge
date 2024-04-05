@@ -30,3 +30,27 @@ File: 02.txt, Execution time: 7.833333333333334E-4 minutes
 
 File: 03.txt, Execution time: 0.801 minutes
 
+File: 00.txt, Execution time: 1.6666666666666666E-4 minutes
+
+File: 01.txt, Execution time: 1.6666666666666667E-5 minutes
+
+File: 02.txt, Execution time: 1.1666666666666667E-4 minutes
+
+File: 03.txt, Execution time: 0.023016666666666668 minutes
+
+File: 04.txt, Execution time: 0.18333333333333332 minutes
+
+File: 05.txt, Execution time: 1.7843833333333334 minutes
+
+File: 00.txt, Execution time: 1.5E-4 minutes
+
+File: 01.txt, Execution time: 1.6666666666666667E-5 minutes
+
+File: 02.txt, Execution time: 1.1666666666666667E-4 minutes
+
+File: 03.txt, Execution time: 0.013883333333333333 minutes
+
+File: 04.txt, Execution time: 0.36891666666666667 minutes
+
+File: 05.txt, Execution time: 0.0025833333333333333 minutes
+

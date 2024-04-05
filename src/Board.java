@@ -60,11 +60,9 @@ public class Board {
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
                 if (piece.shape[i][j] == 'X') {
-                    if (grid[row + i][col + j] == depth - 1) {
-                        grid[row + i][col + j] = 0;
-                    } else {
-                        grid[row + i][col + j]++;
-                    }
+                    int currentValue = grid[row + i][col + j];
+                    int newValue = (currentValue + 1) & (depth - 1);
+                    grid[row + i][col + j] = newValue;
                 }
             }
         }
@@ -77,16 +75,15 @@ public class Board {
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
                 if (piece.shape[i][j] == 'X') {
-                    if (grid[row + i][col + j] == 0) {
-                        grid[row + i][col + j] = depth - 1;
-                    } else {
-                        grid[row + i][col + j]--;
-                    }
+                    int currentValue = grid[row + i][col + j];
+                    int newValue = (currentValue - 1 + depth) & (depth - 1);
+                    grid[row + i][col + j] = newValue;
                 }
             }
         }
-        placed.remove(placed.size() -  1);
+        placed.remove(placed.size() - 1);
     }
+
 
     public Board copy() {
         int depth = this.depth;

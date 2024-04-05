@@ -51,14 +51,12 @@ public class Solve {
             futures.add(future);
         }
 
-        boolean solutionFound = false;
         Board updatedBoard = null;
 
         for (Future<SolverResult> future : futures) {
             try {
                 SolverResult result = future.get();
                 if (result.isSolutionFound()) {
-                    solutionFound = true;
                     updatedBoard = result.getUpdatedBoard();
                     break; // Stop processing other threads if a solution is found
                 }
@@ -66,12 +64,13 @@ public class Solve {
                 e.printStackTrace();
             }
         }
-        return solutionFound ? updatedBoard : null;
+        executor.shutdown();
+        return updatedBoard;
     }
+
 
     private boolean isValidPartialSolution(Board board, Piece piece, int row, int col) { // pruning
         int[][] currentGrid = board.getGrid();
-        int depth = board.getDepth();
 
         for (int i = row; i < row + piece.shape.length; i++) {
             for (int j = col; j < col + piece.shape[0].length; j++) {
@@ -97,6 +96,9 @@ public class Solve {
         }
         return true;
     }
+    public boolean solve(Board board, Piece[] pieces, int index) {
+        return backtrack(board, prioritizePiecesByShape(pieces), index);
+    }
     public boolean backtrack(Board board, Piece[] pieces, int index) {
         if (index == pieces.length) {
             return this.isValid(board);
@@ -105,18 +107,17 @@ public class Solve {
         Piece currentPiece = pieces[index];
         int pieceRows = currentPiece.shape.length;
         int pieceCols = currentPiece.shape[0].length;
-        int numRows = board.getGrid().length;
-        int numCols = board.getGrid()[0].length;
+        int numRows = grid.length;
+        int numCols = grid[0].length;
         for (int row = 0; row < numRows - pieceRows + 1; row++) {
             for (int col = 0; col < numCols - pieceCols + 1; col++) {
-                if (row + pieceRows <= board.getGrid().length && col + pieceCols <= board.getGrid()[0].length) {
-                    if (board.canPlace(pieces[index], row, col) && isValidPartialSolution(board, pieces[index], row, col)) {
-                        board.placePiece(pieces[index], row, col, depth);
-                        if (backtrack(board, pieces, index + 1)) {
-                            return true;
-                        }
-                        board.removePiece(pieces[index], row, col, depth);
+                if (board.canPlace(pieces[index], row, col) &&
+                        isValidPartialSolution(board, pieces[index], row, col)) {
+                    board.placePiece(pieces[index], row, col, depth);
+                    if (backtrack(board, pieces, index + 1)) {
+                        return true;
                     }
+                    board.removePiece(pieces[index], row, col, depth);
                 }
             }
         }
